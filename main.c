@@ -12,6 +12,9 @@
 
 #include "archiver.h" // import my header.
 
+// define globals
+Archive_Index indexes[16];
+
 /**
  * Method prints out a simple help for the user.
  */
@@ -35,12 +38,22 @@ int main(int argc, char** argv) {
         printHelp();
     } else {
         // open archive by given name
-        int fileDescriptor = open(argv[1], O_WRONLY | O_APPEND, S_IRUSR | S_IRGRP);
+        int fileDescriptor = open(argv[1], O_RDONLY, S_IRUSR | S_IRGRP);
+        if (fileDescriptor == -1) {
+            return EXIT_FAILURE;
+        }
         // read magic number
-        short magicNumber;
-        read(fileDescriptor, &magicNumber, 2);
+        int magicNumber;
+        int numberOfBytesRead = read(fileDescriptor, &magicNumber, 2);
         
+        printf("FileDescriptor: %i\n", fileDescriptor);
+        printf("NumberOfBytesRead: %i\n", numberOfBytesRead);
+        printf("MagicNumber: %x\n", magicNumber);
         // read structs
+//        numberOfBytesRead = read(fileDescriptor, indexes, sizeof(indexes) * sizeof(Archive_Index));
+        numberOfBytesRead = read(fileDescriptor, indexes, sizeof(indexes));
+        printf("NumberOfBytesRead: %i\n", numberOfBytesRead);
+//        printf("MagicNumber: %x\n", indexes);
         
         // output structs
     }
