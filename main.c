@@ -61,8 +61,9 @@ int main(int argc, char** argv) {
         }
 
         listContentOfArchive();
+        close(fileDescriptor);
     }
-
+    
     return (EXIT_SUCCESS);
 }
 
