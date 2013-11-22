@@ -34,7 +34,7 @@ enum File_Type {
 
 
 // constants
- #define MAGIC_NUMBER_ARCHIVE "0x4242" // TODO: soll diese nummer nicht vielleicht als char gespeichert werden?
+#define MAGIC_NUMBER_ARCHIVE "0x4242" // TODO: soll diese nummer nicht vielleicht als char gespeichert werden?
 
 // define structs
 
@@ -49,8 +49,27 @@ struct Archive_Index {
     enum File_Type fileType;
     char fileName[255];
     off_t sizeInBytes;
-    off_t bytePositionInArchive;
+    off_t bytePositionInArchive; // if Index_State is CONTINUE, then this position is the position of the next index in the archive.
 };
+
+/******************* function definitions **********************/
+
+
+/**
+ * Maps a given Index_State enum to a string.
+ * 
+ * @param indexState the {@link Index_State}
+ * @return the string representation of the enum
+ */
+char* mapIndexStateToString(enum Index_State indexState);
+
+/**
+ * Maps a given FileType enum to a string.
+ * 
+ * @param fileType the given {@link File_Type}
+ * @return the string representation of the enum
+ */
+char* mapFileTypeToString(enum File_Type fileType);
 
 #endif	/* ARCHIVER_H */
 

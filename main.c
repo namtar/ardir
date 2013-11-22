@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "archiver.h" // import my header.
 
@@ -23,9 +24,8 @@ void printHelp();
 /**
  * Lists the content of the given archive.
  * 
- * @param fileName the filename of the given archive
  */
-void listContentOfArchive(char *fileName);
+void listContentOfArchive();
 
 /*
  * 
@@ -43,26 +43,48 @@ int main(int argc, char** argv) {
             return EXIT_FAILURE;
         }
         // read magic number
-        int magicNumber;
+        short magicNumber;
         int numberOfBytesRead = read(fileDescriptor, &magicNumber, 2);
-        
-        printf("FileDescriptor: %i\n", fileDescriptor);
-        printf("NumberOfBytesRead: %i\n", numberOfBytesRead);
-        printf("MagicNumber: %x\n", magicNumber);
+
+        // check for correct archive
+        if (magicNumber != 0x4242) {
+            printf("Falsches Archiv\n");
+            return EXIT_FAILURE;
+        }
         // read structs
-//        numberOfBytesRead = read(fileDescriptor, indexes, sizeof(indexes) * sizeof(Archive_Index));
-        numberOfBytesRead = read(fileDescriptor, indexes, sizeof(indexes));
-        printf("NumberOfBytesRead: %i\n", numberOfBytesRead);
-//        printf("MagicNumber: %x\n", indexes);
-        
-        // output structs
+        numberOfBytesRead = read(fileDescriptor, indexes, sizeof (indexes));
+
+        if (numberOfBytesRead == -1) {
+            // something went wrong reading the indexes
+            printf("Error when reading the indexes.");
+            return EXIT_FAILURE;
+        }
+
+        listContentOfArchive();
     }
 
     return (EXIT_SUCCESS);
 }
 
-void listContentOfArchive(char* fileName) {
+void listContentOfArchive() {
 
+    // TODO: das funktioniert erstmal nur für ein Inhaltsverzeichnis. Index State Continue auswerten, wenn die aradd Funktionalität fertig ist.
+
+    // output structs
+    int i;
+    //        for (i = 0; i < sizeof (indexes) / sizeof (Archive_Index); i++) {
+    for (i = 0; i < 16; i++) {
+        Archive_Index index = indexes[i];
+        printf("Index Position: %i\n", i);
+        printf("State: %s\n", mapIndexStateToString(index.state));
+        printf("Last access time: %s", ctime(&index.lastAccessTime));
+        printf("UID: %i\n", index.uid);
+        printf("GID: %i\n", index.gid);
+        printf("File type: %s\n", mapFileTypeToString(index.fileType));
+        printf("File name: %s\n", index.fileName);
+        printf("Size in bytes: %i\n", (int) index.sizeInBytes);
+        printf("Byte position in archive: %i\n\n", (int) index.bytePositionInArchive);
+    }
 }
 
 void printHelp() {
