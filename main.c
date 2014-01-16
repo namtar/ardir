@@ -63,11 +63,11 @@ int main(int argc, char** argv) {
         listContentOfArchive();
         close(fileDescriptor);
     }
-    
+
     return (EXIT_SUCCESS);
 }
 
-void listContentOfArchive() {
+void listContentOfArchive(int archiveFd) {
 
     // TODO: das funktioniert erstmal nur für ein Inhaltsverzeichnis. Index State Continue auswerten, wenn die aradd Funktionalität fertig ist.
 
@@ -85,6 +85,12 @@ void listContentOfArchive() {
         printf("File name: %s\n", index.fileName);
         printf("Size in bytes: %i\n", (int) index.sizeInBytes);
         printf("Byte position in archive: %i\n\n", (int) index.bytePositionInArchive);
+        
+        if (index.state == CONTINUE) {
+            lseek(archiveFd, index.bytePositionInArchive, SEEK_SET);
+            read(archiveFd, indexes, sizeof (indexes));
+            i = 0;
+        }
     }
 }
 

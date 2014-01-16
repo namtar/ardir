@@ -28,7 +28,7 @@ char* mapIndexStateToString(enum Index_State indexState) {
         case 5:
             return "CONTINUE";
         default:
-            printf("Enum value is not known / mapped.");
+            printf("Enum value is not known / mapped. %i", indexState);
             exit(EXIT_FAILURE);
     }
 }
