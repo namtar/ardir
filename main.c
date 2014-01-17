@@ -75,23 +75,26 @@ void listContentOfArchive(int archiveFd) {
     int i;
     //        for (i = 0; i < sizeof (indexes) / sizeof (Archive_Index); i++) {
     for (i = 0; i < 16; i++) {
-        Archive_Index index = indexes[i];
+        //Archive_Index index = indexes[i];
         printf("Index Position: %i\n", i);
-        printf("State: %s\n", mapIndexStateToString(index.state));
-        printf("Last access time: %s", ctime(&index.lastAccessTime));
-        printf("UID: %i\n", index.uid);
-        printf("GID: %i\n", index.gid);
-        printf("File type: %s\n", mapFileTypeToString(index.fileType));
-        printf("File name: %s\n", index.fileName);
-        printf("Size in bytes: %i\n", (int) index.sizeInBytes);
-        printf("Byte position in archive: %i\n\n", (int) index.bytePositionInArchive);
-        
-        if (index.state == CONTINUE) {
-            lseek(archiveFd, index.bytePositionInArchive, SEEK_SET);
+        printf("State: %s\n", mapIndexStateToString(indexes[i].state));
+        if (indexes[i].state != FREE) {
+            printf("Last access time: %s", ctime(&indexes[i].lastAccessTime));
+            printf("UID: %i\n", indexes[i].uid);
+            printf("GID: %i\n", indexes[i].gid);
+            printf("File type: %s\n", mapFileTypeToString(indexes[i].fileType));
+            printf("File name: %s\n", indexes[i].fileName);
+            printf("Size in bytes: %i\n", (int) indexes[i].sizeInBytes);
+            printf("Byte position in archive: %i\n\n", (int) indexes[i].bytePositionInArchive);
+        }
+        fflush(NULL);
+        if (indexes[i].state == CONTINUE) {
+            lseek(archiveFd, indexes[i].bytePositionInArchive, SEEK_SET);
             read(archiveFd, indexes, sizeof (indexes));
-            i = 0;
+            i = -1;
         }
     }
+    i = 1;
 }
 
 void printHelp() {

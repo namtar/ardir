@@ -15,17 +15,17 @@ char* mapIndexStateToString(enum Index_State indexState) {
     //  FREE, ACTUAL, DELETED, REPLACED, EOA, CONTINUE
 
     switch (indexState) {
-        case 0:
+        case FREE:
             return "FREE";
-        case 1:
+        case ACTUAL:
             return "ACTUAL";
-        case 2:
+        case DELETED:
             return "DELETED";
-        case 3:
+        case REPLACED:
             return "REPLACED";
-        case 4:
+        case EOA:
             return "EOA";
-        case 5:
+        case CONTINUE:
             return "CONTINUE";
         default:
             printf("Enum value is not known / mapped. %i", indexState);
